@@ -1,9 +1,9 @@
 input = File.read(File.expand_path("./input.txt"))
-lines = input.split("\n")
+rucksacks = input.split("\n")
 priorities = ("a".."z").to_a + ("A".."Z").to_a
 
 scores = []
-lines.each do |rucksack|
+rucksacks.each do |rucksack|
   rucksack = rucksack.split('')
   compartment_size = rucksack.length / 2
   c1 = rucksack.first(compartment_size)
