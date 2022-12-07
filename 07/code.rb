@@ -1,0 +1,1 @@
+input = File.read(File.expand_path("./sample_input.txt"))
