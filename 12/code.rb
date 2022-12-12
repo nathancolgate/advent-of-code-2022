@@ -109,9 +109,9 @@ class Map
     matrix.each do |line|
       line.each do |elevation|
         @edge_weights[[elevation.number,elevation.n?]] = 1 if elevation.n?
-        @edge_weights[[elevation.number,elevation.e?]] = 2 if elevation.e?
-        @edge_weights[[elevation.number,elevation.s?]] = 3 if elevation.s?
-        @edge_weights[[elevation.number,elevation.w?]] = 4 if elevation.w?
+        @edge_weights[[elevation.number,elevation.e?]] = 1 if elevation.e?
+        @edge_weights[[elevation.number,elevation.s?]] = 1 if elevation.s?
+        @edge_weights[[elevation.number,elevation.w?]] = 1 if elevation.w?
       end
     end
   end
