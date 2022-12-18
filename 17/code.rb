@@ -71,7 +71,7 @@ class Simulation
   def run
     loop do
       @tick += 1
-      puts @tick
+      puts @tick if @tick%100000 == 0
       jet_action
       break unless fall_action
     end
