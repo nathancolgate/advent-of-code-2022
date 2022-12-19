@@ -24,8 +24,11 @@ class Shaft
     @width = 7
     @tick = -1
     @rock_count = 1000000000000
+    @height = 0
     # 127 is 7 solid bits, or the bottom of the shaft
     @deposits = [127]
+    @rock = Rock.new([],0)
+    @simulation = Simulation.new(@rock,self)
   end
 
   def rock_shapes
@@ -40,9 +43,10 @@ class Shaft
 
   def run
     @rock_count.times do |i|
+      puts i if i%1000000 == 0
       add_rock(rock_shapes[i%5])
     end
-    puts @deposits.length - 1
+    puts @height + @deposits.length - 1
   end
 
   def input
@@ -54,28 +58,39 @@ class Shaft
   end
 
   def add_rock(shape)
+    manage_height
     @deposits += Array.new(3+shape.length,0)
-    @rock = Rock.new(shape, @deposits.length-shape.length)
-    @tick = Simulation.new(@rock,self,@tick).run
+    @rock.shape = shape
+    @rock.altitude = @deposits.length-shape.length
+    @simulation.rock = @rock
+    @tick = @simulation.run(@tick)
     @deposits.reject! {|r| r.zero?}
   end
+
+  def manage_height
+    delta = @deposits.length - 64
+    if delta > 0
+      @height += delta
+      @deposits.shift(delta)
+    end
+  end
+
 end
 
 class Simulation
-  def initialize(rock,shaft,tick)
+  attr_accessor :rock,:shaft
+  def initialize(rock,shaft)
     @rock = rock
     @shaft = shaft
-    @tick = tick
   end
 
-  def run
+  def run(tick)
     loop do
-      @tick += 1
-      puts @tick if @tick%100000 == 0
-      jet_action
+      tick += 1
+      jet_action(tick)
       break unless fall_action
     end
-    return @tick
+    return tick
   end
 
   def fall_action
@@ -94,8 +109,8 @@ class Simulation
     end
   end
 
-  def jet_action
-    jet = @shaft.jets[@tick.modulo(@shaft.jets.length)]
+  def jet_action(tick)
+    jet = @shaft.jets[tick.modulo(@shaft.jets.length)]
     if jet == '<' && may_move_left?
       @rock.move_left!
     elsif jet == '>' && may_move_right?
